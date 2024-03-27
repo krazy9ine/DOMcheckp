@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shopping Cart</title>
+  <style>
+    .cart-item {
+      margin-bottom: 10px;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 10px;
+    }
+
+    .cart-item:last-child {
+      border-bottom: none;
+    }
+
+    .item-details {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .item-actions {
+      display: flex;
+      align-items: center;
+    }
+
+    .item-actions button {
+      margin: 0 5px;
+    }
+
+    .like-button {
+      cursor: pointer;
+    }
+
+    .like-button.clicked {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <div id="cart">
+    <div class="cart-item">
+      <div class="item-details">
+        <span>Item 1</span>
+        <span>$10</span>
+      </div>
+      <div class="item-actions">
+        <button onclick="decrementItem(1)">-</button>
+        <span id="quantity1">1</span>
+        <button onclick="incrementItem(1)">+</button>
+        <button onclick="removeItem(1)">Delete</button>
+        <span class="like-button" onclick="toggleLike(1)">❤️</span>
+      </div>
+    </div>
+    <div class="cart-item">
+      <div class="item-details">
+        <span>Item 2</span>
+        <span>$20</span>
+      </div>
+      <div class="item-actions">
+        <button onclick="decrementItem(2)">-</button>
+        <span id="quantity2">1</span>
+        <button onclick="incrementItem(2)">+</button>
+        <button onclick="removeItem(2)">Delete</button>
+        <span class="like-button" onclick="toggleLike(2)">❤️</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="total">Total: $30</div>
+
+  <script>
+    // Cart items data
+    const cartItems = [
+      { id: 1, name: "Item 1", price: 10, quantity: 1, liked: false },
+      { id: 2, name: "Item 2", price: 20, quantity: 1, liked: false }
+    ];
+
+    // Functions to update cart
+    function incrementItem(id) {
+      const item = cartItems.find(item => item.id === id);
+      item.quantity++;
+      updateCart();
+    }
+
+    function decrementItem(id) {
+      const item = cartItems.find(item => item.id === id);
+      if (item.quantity > 1) {
+        item.quantity--;
+        updateCart();
+      }
+    }
+
+    function removeItem(id) {
+      const index = cartItems.findIndex(item => item.id === id);
+      cartItems.splice(index, 1);
+      updateCart();
+    }
+
+    function toggleLike(id) {
+      const item = cartItems.find(item => item.id === id);
+      item.liked = !item.liked;
+      updateCart();
+    }
+
+    function updateCart() {
+      const cartElement = document.getElementById('cart');
+      cartElement.innerHTML = '';
+      let total = 0;
+
+      cartItems.forEach(item => {
+        const itemElement = document.createElement('div');
+        itemElement.classList.add('cart-item');
+        itemElement.innerHTML = `
+          <div class="item-details">
+            <span>${item.name}</span>
+            <span>$${item.price * item.quantity}</span>
+          </div>
+          <div class="item-actions">
+            <button onclick="decrementItem(${item.id})">-</button>
+            <span id="quantity${item.id}">${item.quantity}</span>
+            <button onclick="incrementItem(${item.id})">+</button>
+            <button onclick="removeItem(${item.id})">Delete</button>
+            <span class="like-button ${item.liked ? 'clicked' : ''}" onclick="toggleLike(${item.id})">❤️</span>
+          </div>
+        `;
+        cartElement.appendChild(itemElement);
+        total += item.price * item.quantity;
+      });
+
+      const totalElement = document.getElementById('total');
+      totalElement.textContent = `Total: $${total}`;
+    }
+    updateCart();
+  </script>
+</body>
+</html>
